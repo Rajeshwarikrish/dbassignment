@@ -49,7 +49,7 @@ class collection  {
       $db = dbConn::getConnection();
       $tableName = get_called_class();
       $sql = 'SELECT * FROM ' . $tableName;
-      res_query=query(sql);
+      $res_query=query(sql);
     /*  $statement = $db->prepare($sql);
       $statement->execute();
       $class = static::$modelName;
@@ -68,8 +68,34 @@ class collection  {
       echo $resquery[0];
    }
 
+   class accounts extends collection  {
+      protected static $modelName = 'account';
+   }
 
+   class todos extends collection  {
+      protected static $modelName = 'todo';
+   }
 
+   class model  {
+      protected $tableName;
+      public function save()  {
+        if ($this->id = ' ')  {
+	  $sql = $this->insert();
+
+	} else {
+	  $sql = $this->update();
+	}
+	$db = dbConn::getConnection();
+	$statement = $db->prepare($sql);
+	$statement->execute();
+	$tableName = get_called_class();
+	$array = get_object_vars($this);
+	$columnString = implode(',', $array);
+	$valueString = ":".implode(',:',$array);
+	echo 'Record Saved: ' .$this->id;
+      }
+   //private function insert()  {
+     ?> 
 
 
 
