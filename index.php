@@ -30,7 +30,43 @@ protected static $db;
 }
 
 
+class collection  {
+   static public function createtable()  {
+     $model = new ststic::$modelName;
+     return $model;
+   }
 
+   static public function query(sql)   {
+      $statement = $db->prepare($sql);
+      $statement->execute();
+      $class = static::$modelName;
+      $statement->setFetch(PDO::FETCH_CLASS, $class);
+      $recordSet = $statement->fetchAll();
+      return $recordset;
+}
+
+   static public function findAll()  {
+      $db = dbConn::getConnection();
+      $tableName = get_called_class();
+      $sql = 'SELECT * FROM ' . $tableName;
+      res_query=query(sql);
+    /*  $statement = $db->prepare($sql);
+      $statement->execute();
+      $class = static::$modelName;
+      $statement->setFetch(PDO::FETCH_CLASS, $class);
+      $recordSet = $statement->fetchAll();
+      return $recordSet;*/
+      echo $res_query;
+   }
+
+   static public function findOne()  {
+      $db = dbConn::getConnection();
+      $tableName = get_called_class();
+      $sql = 'SELECT * FROM ' . $tableName . 'WHERE id = ' . $id;
+      res_query=query(sql);
+      //return $recordset[0];
+      echo $resquery[0];
+   }
 
 
 
