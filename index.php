@@ -1,9 +1,9 @@
 <?php
 ini_set('display_errors','On');
-error_report(E_ALL);
+error_reporting(E_ALL);
 
 define('DATABASE', 'rk633');
-define('DATABASE', 'rk633');
+define('USERNAME', 'rk633');
 define('PASSWORD', 'LKVWAEKo');
 define('CONNECTION', 'sql2.njit.edu');
 
@@ -11,10 +11,9 @@ class dbConn {
 protected static $db;
   private function __construct() {
        try  {
-	     self::$db = new PDO('mysql:host=' . CONNECTION .';DBNAME='
+	     self::$db = new PDO('mysql:host=' . CONNECTION .';dbname='
 	     .DATABASE, USERNAME, PASSWORD );
-	     self::$db->setAttribute( PDO::ATTR_ERRMODE,
-	     PDO::ERRMODE_EXCEPTION);
+	     self::$db->setAttribute( PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
 	}
 	catch (PDOException $e)  {
 	     echo "Connection Error:" . $e->getMessage();
@@ -32,11 +31,11 @@ protected static $db;
 
 class collection  {
    static public function createtable()  {
-     $model = new ststic::$modelName;
+     $model = new static::$modelName;
      return $model;
    }
 
-   static public function query(sql)   {
+   static public function query($sql)   {
       $statement = $db->prepare($sql);
       $statement->execute();
       $class = static::$modelName;
@@ -49,7 +48,7 @@ class collection  {
       $db = dbConn::getConnection();
       $tableName = get_called_class();
       $sql = 'SELECT * FROM ' . $tableName;
-      $res_query=query(sql);
+      $res_query=query($sql);
     /*  $statement = $db->prepare($sql);
       $statement->execute();
       $class = static::$modelName;
@@ -63,11 +62,11 @@ class collection  {
       $db = dbConn::getConnection();
       $tableName = get_called_class();
       $sql = 'SELECT * FROM ' . $tableName . 'WHERE id = ' . $id;
-      res_query=query(sql);
+      $res_query=query($sql);
       //return $recordset[0];
-      echo $resquery[0];
+      echo $res_query[0];
    }
-
+}
    class accounts extends collection  {
       protected static $modelName = 'account';
    }
@@ -94,7 +93,51 @@ class collection  {
 	$valueString = ":".implode(',:',$array);
 	echo 'Record Saved: ' .$this->id;
       }
-   //private function insert()  {
+ }
+   private function insert()  {
+      $sql = 'something';
+      return $sql;
+   }
+   private function update()  {
+      $sql = 'something';
+      return $sql;
+      echo "Updated successfully";
+   }
+   public function delete()  {
+      echo 'I deleted record' . $this->id;
+   }
+}
+
+class account extends model  {
+
+}
+
+class todo extends model  {
+   public $id;
+   public $ownermail;
+   public $ownerid;
+   public $createddate;
+   public $duedate;
+   public $message;
+   public $isdone;
+
+   public function __construct()
+   {
+       $this->tableName = 'todos';
+   }
+}
+
+$records = accounts::findAll();
+$records = todos::findAll();
+$record = todos::findOne(1);
+$record = new todo();
+$record->message = 'some task';
+$record->isdone = 0;
+print_r($record);
+print_r($record);
+
+}
+
      ?> 
 
 
