@@ -5,14 +5,14 @@ error_reporting(E_ALL);
 define('DATABASE', 'rk633');
 define('USERNAME', 'rk633');
 define('PASSWORD', 'LKVWAEKo');
-define('CONNECTION', 'sql2.njit.edu');
+define('CONNECTION', 'sql.njit.edu');
 
 class dbConn {
 protected static $db;
   private function __construct() {
        try  {
 	     self::$db = new PDO('mysql:host=' . CONNECTION .';dbname='
-	     .DATABASE, USERNAME, PASSWORD );
+	     . DATABASE, USERNAME, PASSWORD );
 	     self::$db->setAttribute( PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
 	}
 	catch (PDOException $e)  {
@@ -30,41 +30,46 @@ protected static $db;
 
 
 class collection  {
-   static public function createtable()  {
+   static public function create()  {
      $model = new static::$modelName;
      return $model;
    }
 
-   static public function query($sql)   {
+/*   static public function query($sql)   {
       $statement = $db->prepare($sql);
       $statement->execute();
       $class = static::$modelName;
       $statement->setFetch(PDO::FETCH_CLASS, $class);
       $recordSet = $statement->fetchAll();
       return $recordset;
-}
+}*/
 
    static public function findAll()  {
       $db = dbConn::getConnection();
       $tableName = get_called_class();
       $sql = 'SELECT * FROM ' . $tableName;
-      $res_query=query($sql);
-    /*  $statement = $db->prepare($sql);
+      //$res_query=query($sql);
+      $statement = $db->prepare($sql);
       $statement->execute();
       $class = static::$modelName;
-      $statement->setFetch(PDO::FETCH_CLASS, $class);
+      $statement->setFetchMode(PDO::FETCH_CLASS, $class);
       $recordSet = $statement->fetchAll();
-      return $recordSet;*/
-      echo $res_query;
+      return $recordSet;
+      //echo $res_query;
    }
 
-   static public function findOne()  {
+   static public function findOne($id)  {
       $db = dbConn::getConnection();
       $tableName = get_called_class();
-      $sql = 'SELECT * FROM ' . $tableName . 'WHERE id = ' . $id;
-      $res_query=query($sql);
-      //return $recordset[0];
-      echo $res_query[0];
+      $sql = 'SELECT * FROM ' . $tableName . 'WHERE id =' . $id;
+      $statement = $db->prepare($sql);
+      $statement->execute();
+      $class = static::$modelName;
+      $statement->setFetchMode(PDO::FETCH_CLASS, $class);
+      $recordSet = $statement->fetchAll();
+      //$res_query=query($sql);
+      return $recordset[0];
+      //echo $res_query[0];
    }
 }
    class accounts extends collection  {
@@ -93,8 +98,8 @@ class collection  {
 	$valueString = ":".implode(',:',$array);
 	echo 'Record Saved: ' .$this->id;
       }
- }
-   private function insert()  {
+
+   public function insert()  {
       $sql = 'something';
       return $sql;
    }
@@ -107,7 +112,6 @@ class collection  {
       echo 'I deleted record' . $this->id;
    }
 }
-
 class account extends model  {
 
 }
@@ -126,7 +130,6 @@ class todo extends model  {
        $this->tableName = 'todos';
    }
 }
-
 $records = accounts::findAll();
 $records = todos::findAll();
 $record = todos::findOne(1);
@@ -136,7 +139,7 @@ $record->isdone = 0;
 print_r($record);
 print_r($record);
 
-}
+
 
      ?> 
 
