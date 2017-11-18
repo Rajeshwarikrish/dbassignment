@@ -11,9 +11,10 @@ class dbConn {
 protected static $db;
   private function __construct() {
        try  {
-	     self::$db = new PDO('mysql:host=' . CONNECTION .';dbname='
+	     self::$db = new PDO( 'mysql:host=' . CONNECTION . ';dbname='
 	     . DATABASE, USERNAME, PASSWORD );
-	     self::$db->setAttribute( PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+	     self::$db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	     echo 'Connection Successful<br>';
 	}
 	catch (PDOException $e)  {
 	     echo "Connection Error:" . $e->getMessage();
@@ -35,55 +36,44 @@ class collection  {
      return $model;
    }
 
-/*   static public function query($sql)   {
-      $statement = $db->prepare($sql);
-      $statement->execute();
-      $class = static::$modelName;
-      $statement->setFetch(PDO::FETCH_CLASS, $class);
-      $recordSet = $statement->fetchAll();
-      return $recordset;
-}*/
-
    static public function findAll()  {
-      $db = dbConn::getConnection();
+     // $db = dbConn::getConnection();
       $tableName = get_called_class();
       $sql = 'SELECT * FROM ' . $tableName;
-      //$res_query=query($sql);
+      $db = dbConn::getConnection();
       $statement = $db->prepare($sql);
       $statement->execute();
       $class = static::$modelName;
-      $statement->setFetchMode(PDO::FETCH_CLASS, $class);
+      $statement->setFetchMode(PDO::FETCH_CLASS,$class);
       $recordSet = $statement->fetchAll();
       return $recordSet;
-      //echo $res_query;
    }
 
    static public function findOne($id)  {
-      $db = dbConn::getConnection();
+     // $db = dbConn::getConnection();
       $tableName = get_called_class();
-      $sql = 'SELECT * FROM ' . $tableName . 'WHERE id =' . $id;
+      $sql = 'SELECT * FROM ' . $tableName . ' WHERE id =' . $id;
+      $db = dbConn::getConnection();
       $statement = $db->prepare($sql);
       $statement->execute();
       $class = static::$modelName;
-      $statement->setFetchMode(PDO::FETCH_CLASS, $class);
+      $statement->setFetchMode(PDO::FETCH_CLASS,$class);
       $recordSet = $statement->fetchAll();
-      //$res_query=query($sql);
-      return $recordset[0];
-      //echo $res_query[0];
+      return $recordSet;
    }
 }
    class accounts extends collection  {
-      protected static $modelName = 'account';
+      public static $modelName = 'account';
    }
 
    class todos extends collection  {
-      protected static $modelName = 'todo';
+      public static $modelName = 'todo';
    }
 
    class model  {
       protected $tableName;
       public function save()  {
-        if ($this->id = ' ')  {
+       if ($this->id = ' ')  {
 	  $sql = $this->insert();
 
 	} else {
@@ -96,20 +86,17 @@ class collection  {
 	$array = get_object_vars($this);
 	$columnString = implode(',', $array);
 	$valueString = ":".implode(',:',$array);
-	echo 'Record Saved: ' .$this->id;
+	echo 'Record Saved: ' .$this->id; 
       }
 
    public function insert()  {
-      $sql = 'something';
-      return $sql;
+      
    }
    private function update()  {
-      $sql = 'something';
-      return $sql;
-      echo "Updated successfully";
+    
    }
    public function delete()  {
-      echo 'I deleted record' . $this->id;
+    
    }
 }
 class account extends model  {
@@ -138,10 +125,7 @@ $record->message = 'some task';
 $record->isdone = 0;
 print_r($record);
 print_r($record);
-
-
-
-     ?> 
+?> 
 
 
 
