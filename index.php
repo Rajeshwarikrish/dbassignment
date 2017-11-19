@@ -40,11 +40,11 @@ class collection  {
       $db = dbConn::getConnection();
       $tableName = get_called_class();
       $sql = 'SELECT * FROM ' . $tableName;
-      $statement = $db->prepare($sql);
-      $statement->execute();
+      $stmt = $db->prepare($sql);
+      $stmt->execute();
       $class = static::$modelName;
-      $statement->setFetchMode(PDO::FETCH_CLASS,$class);
-      $recordSet = $statement->fetchAll();
+      $stmt->setFetchMode(PDO::FETCH_CLASS,$class);
+      $recordSet = $stmt->fetchAll();
       return $recordSet;
    }
 
@@ -52,11 +52,11 @@ class collection  {
       $db = dbConn::getConnection();
       $tableName = get_called_class();
       $sql = 'SELECT * FROM ' . $tableName . ' WHERE id =' . $id;
-      $statement = $db->prepare($sql);
-      $statement->execute();
+      $stmt = $db->prepare($sql);
+      $stmt->execute();
       $class = static::$modelName;
-      $statement->setFetchMode(PDO::FETCH_CLASS,$class);
-      $recordSet = $statement->fetchAll();
+      $stmt->setFetchMode(PDO::FETCH_CLASS,$class);
+      $recordSet = $stmt->fetchAll();
       return $recordSet;
    }
 }
@@ -78,8 +78,8 @@ class collection  {
 	  $sql = $this->update();
 	}
 	$db = dbConn::getConnection();
-	$statement = $db->prepare($sql);
-	$statement->execute();
+	$stmt = $db->prepare($sql);
+	$stmt->execute();
 	$tableName = get_called_class();
 	$array = get_object_vars($this);
 	$columnString = implode(',', $array);
@@ -95,10 +95,10 @@ class collection  {
      $heading = array_keys($arr);
      $columnString = implode(',',$heading);
      $valueString = ':' . implode(',:',$heading);
-     $query = 'INSERT INTO ' . $table . (' . $columnString . ') 'VALUES' (' .
-     $valueString . ');
-     $statement = $db->prepare($query);
-     $statement->execute($arr);
+     $query = 'INSERT INTO ' . $table . ' (' . $columnString . ') VALUES (' .
+     $valueString . ')';
+     $stmt = $db->prepare($query);
+     $stmt->execute($arr);
    }
 
    public function update($id)  {
@@ -112,20 +112,47 @@ class collection  {
     foreach($arr as $key=> $value)  {
        if($value!='')  {
           array_push($Value, $key . '=' . ':' . $key);
-	  Array[$key] = $value;
+	  $Array[$key] = $value;
        }
     }
     $str = implode(',',$Value);
-    $query = 'UPDATE ' . $table . ' SET ' . $str . 'WHERE id=' .$id;
-    $statement = $db->prepare($query);
-    $statement->execute($Array);
+    $query = 'UPDATE ' . $table . ' SET ' . $str . ' WHERE id=' .$id;
+    $stmt = $db->prepare($query);
+    $stmt->execute($Array);
   }
-   public function delete()  {
-    
-   }
-}
-class account extends model  {
+  
+  public function delete()  {
+    $db = dbConn::getConnection();
+    $table = $this->table;
+    $query = 'DELETE FROM ' . $table . 'WHERE id= ' . $id;
+    $stmt = $db->prepare($query);
+    echo 'Row with id = ' . $id . 'deleted successfully<br>';
+  }
 
+  public function getHeading()  {
+    $table = $this->table;
+    $query = 'SHOW COLUMNS FROM ' . $table;
+    $db = dbConn::getConnection();
+    $stmt = $db->prepare($query);
+    $stmt->execute();
+    $heading = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    return $heading;
+    }
+}
+
+class account extends model  {
+   public $id;
+   public $email;
+   public $fname;
+   public $lname;
+   public $phone;
+   public $birthday;
+   public $gender;
+   public $password;
+
+   public function __construct() {
+      $this->table = 'accounts';
+   }
 }
 
 class todo extends model  {
@@ -139,17 +166,54 @@ class todo extends model  {
 
    public function __construct()
    {
-       $this->tableName = 'todos';
+       $this->table = 'todos';
    }
 }
+
+class table  {
+   static public function create($heading,$rows)  {
+   $table = NULL;
+   $table .="<table border = 1>";
+   foreach ($heading as $head)  {
+     $table .= "<td>$head</td>";
+   }
+   foreach ($rows as $row)  {
+     $table .= "<tr>";
+     foreach ($row as $column)  {
+       $table .= "<td>$column</td>";
+     }
+     $table .= "</tr>";
+   }
+   $table .= "</table>";
+   echo $table;
+   }
+}
+
+accounts::create();
 $records = accounts::findAll();
-$records = todos::findAll();
-$record = todos::findOne(1);
-$record = new todo();
-$record->message = 'some task';
-$record->isdone = 0;
-print_r($record);
-print_r($record);
+//$records = todos::findAll();
+$record = accounts::findOne(1);
+$rec = new account();
+$heading = $rec->getHeading();
+echo '<center>';
+echo '<h2> findAll() function on accounts table</h2>';
+echo table::create($heading,$records);
+$rec->fname = 'Maria';
+$rec->lname = 'Jones';
+$rec->insert();
+$rec2 = accounts::findOne(10);
+echo '<h2>Inserted values fname=Maria and lname=Jones into accounts table</h2>';
+//echo table::createTable($heading,$rec2);
+//$rec2 accounts::findOne(1016);
+echo table::create($heading,$rec2);
+$rec->phone = '8628728399';
+$rec->update(10);
+$rec2 = accounts::findOne(10);
+echo '<h2>Updated the values of phone where id=10 in the accounts table</h2>';
+echo table::create($heading,$rec2);
+
+//print_r($record);
+//print_r($record);
 ?> 
 
 
@@ -167,4 +231,4 @@ print_r($record);
 
 
 
->
+
