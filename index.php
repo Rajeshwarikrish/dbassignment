@@ -37,10 +37,9 @@ class collection  {
    }
 
    static public function findAll()  {
-     // $db = dbConn::getConnection();
+      $db = dbConn::getConnection();
       $tableName = get_called_class();
       $sql = 'SELECT * FROM ' . $tableName;
-      $db = dbConn::getConnection();
       $statement = $db->prepare($sql);
       $statement->execute();
       $class = static::$modelName;
@@ -50,10 +49,9 @@ class collection  {
    }
 
    static public function findOne($id)  {
-     // $db = dbConn::getConnection();
+      $db = dbConn::getConnection();
       $tableName = get_called_class();
       $sql = 'SELECT * FROM ' . $tableName . ' WHERE id =' . $id;
-      $db = dbConn::getConnection();
       $statement = $db->prepare($sql);
       $statement->execute();
       $class = static::$modelName;
@@ -71,7 +69,7 @@ class collection  {
    }
 
    class model  {
-      protected $tableName;
+      protected $table;
       public function save()  {
        if ($this->id = ' ')  {
 	  $sql = $this->insert();
@@ -90,10 +88,22 @@ class collection  {
       }
 
    public function insert()  {
-      
+     $db = dbConn::getConnection();
+     $table = $this->table;
+     $arr = get_object_vars($this);
+     array_pop($arr);
+     $heading = array_keys($arr);
+     $columnString = implode(',',$heading);
+     $valueString = ':' . implode(',:',$heading);
+     $query = 'INSERT INTO . table . (' . $columnString . ') VALUES (' .
+     $valueString . ')';
+     $statement = $db->prepare($sql);
+     $statement->executr($arr);
    }
-   private function update()  {
-    
+
+   public function update()  {
+    $db = dbConn::getConnection();
+    $table = $this
    }
    public function delete()  {
     
