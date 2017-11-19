@@ -71,20 +71,12 @@ class collection  {
    class model  {
       protected $table;
       public function save()  {
-       if ($this->id = ' ')  {
-	  $sql = $this->insert();
+       if ($this->id == '')  {
+	   $this->insert();
 
 	} else {
-	  $sql = $this->update();
-	}
-	$db = dbConn::getConnection();
-	$stmt = $db->prepare($sql);
-	$stmt->execute();
-	$tableName = get_called_class();
-	$array = get_object_vars($this);
-	$columnString = implode(',', $array);
-	$valueString = ":".implode(',:',$array);
-	echo 'Record Saved: ' .$this->id; 
+	   $this->update($this->id);
+	} 
       }
 
    public function insert()  {
@@ -121,12 +113,13 @@ class collection  {
     $stmt->execute($Array);
   }
   
-  public function delete()  {
+  public function delete($id)  {
     $db = dbConn::getConnection();
     $table = $this->table;
-    $query = 'DELETE FROM ' . $table . 'WHERE id= ' . $id;
+    $query = 'DELETE FROM ' . $table . ' WHERE id= ' . $id;
     $stmt = $db->prepare($query);
-    echo 'Row with id = ' . $id . 'deleted successfully<br>';
+    $stmt->execute();
+    echo '<h2>Row with id = ' . $id . ' deleted successfully<br></h2>';
   }
 
   public function getHeading()  {
@@ -157,7 +150,7 @@ class account extends model  {
 
 class todo extends model  {
    public $id;
-   public $ownermail;
+   public $owneremail;
    public $ownerid;
    public $createddate;
    public $duedate;
@@ -175,7 +168,7 @@ class table  {
    $table = NULL;
    $table .="<table border = 1>";
    foreach ($heading as $head)  {
-     $table .= "<td>$head</td>";
+     $table .= "<th>$head</th>";
    }
    foreach ($rows as $row)  {
      $table .= "<tr>";
@@ -191,29 +184,45 @@ class table  {
 
 accounts::create();
 $records = accounts::findAll();
-//$records = todos::findAll();
 $record = accounts::findOne(1);
 $rec = new account();
 $heading = $rec->getHeading();
-echo '<center>';
-echo '<h2> findAll() function on accounts table</h2>';
+//echo '<center>';
+echo '<h2> FindAll() Function on Accounts Table</h2>';
 echo table::create($heading,$records);
+$rec2 = accounts::findOne(10);
+echo '<h2> FindOne Function on Accounts Table</h2>';
+echo table::create($heading,$rec2);
 $rec->fname = 'Maria';
 $rec->lname = 'Jones';
 $rec->insert();
-$rec2 = accounts::findOne(10);
+$rec2 = accounts::findOne(634);
 echo '<h2>Inserted values fname=Maria and lname=Jones into accounts table</h2>';
-//echo table::createTable($heading,$rec2);
-//$rec2 accounts::findOne(1016);
 echo table::create($heading,$rec2);
 $rec->phone = '8628728399';
 $rec->update(10);
 $rec2 = accounts::findOne(10);
-echo '<h2>Updated the values of phone where id=10 in the accounts table</h2>';
+echo '<h2> Updated the values of phone where id=10 in the accounts table</h2>';
 echo table::create($heading,$rec2);
+$rec->delete(8);
+$acc = accounts::findAll();
+echo table::create($heading,$acc);
 
-//print_r($record);
-//print_r($record);
+todos::create();
+$records = todos::findAll();
+$val = new todo();
+$heading = $val->getHeading();
+echo '<h2> FindAll() Function on Todos Table</h2>';
+echo table::create($heading,$records);
+$val->ownerid = '5';
+$val->message = 'Bootstrapping program';
+$val->isdone = '0';
+$val->id = '2345';
+$val->save();
+$todo = todos::findAll();
+echo '<h2> Save() Function on Todos Table executed Succesfully</h2>';
+echo table::create($heading,$todo);
+//echo '</center>';
 ?> 
 
 
