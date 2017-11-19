@@ -95,16 +95,31 @@ class collection  {
      $heading = array_keys($arr);
      $columnString = implode(',',$heading);
      $valueString = ':' . implode(',:',$heading);
-     $query = 'INSERT INTO . table . (' . $columnString . ') VALUES (' .
-     $valueString . ')';
-     $statement = $db->prepare($sql);
-     $statement->executr($arr);
+     $query = 'INSERT INTO ' . $table . (' . $columnString . ') 'VALUES' (' .
+     $valueString . ');
+     $statement = $db->prepare($query);
+     $statement->execute($arr);
    }
 
-   public function update()  {
+   public function update($id)  {
     $db = dbConn::getConnection();
-    $table = $this
-   }
+    $table = $this->table;
+    $arr = get_object_vars($this);
+    array_pop($arr);
+    $heading = array_keys($arr);
+    $Array = array();
+    $Value = array();
+    foreach($arr as $key=> $value)  {
+       if($value!='')  {
+          array_push($Value, $key . '=' . ':' . $key);
+	  Array[$key] = $value;
+       }
+    }
+    $str = implode(',',$Value);
+    $query = 'UPDATE ' . $table . ' SET ' . $str . 'WHERE id=' .$id;
+    $statement = $db->prepare($query);
+    $statement->execute($Array);
+  }
    public function delete()  {
     
    }
