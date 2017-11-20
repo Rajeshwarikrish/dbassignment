@@ -196,7 +196,7 @@ echo table::create($heading,$rec2);
 $rec->fname = 'Maria';
 $rec->lname = 'Jones';
 $rec->insert();
-$rec2 = accounts::findOne(634);
+$rec2 = accounts::findOne(671);
 echo '<h2>Inserted values fname=Maria and lname=Jones into accounts table</h2>';
 echo table::create($heading,$rec2);
 $rec->phone = '8628728399';
