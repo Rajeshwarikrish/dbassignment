@@ -50,7 +50,7 @@
     $query = 'DELETE FROM ' . $table . ' WHERE id= ' . $id;
     $stmt = $db->prepare($query);
     $stmt->execute();
-    echo '<h2>Row with id = ' . $id . ' deleted successfully<br></h2>';
+    echo '<hr><h2>Row with id = ' . $id . ' deleted successfully<br></h2>';
   }
 
   public function getHeading()  {
